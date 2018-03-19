@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BakingApp</string>
+    <string name="backdrop_title">Baking App</string>
+    <string name="backdrop_subtitle">Sharing my best receips</string>
 </resources>
