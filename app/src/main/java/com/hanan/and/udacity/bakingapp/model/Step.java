@@ -1,12 +1,15 @@
 package com.hanan.and.udacity.bakingapp.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Nono on 3/17/2018.
  */
 
-public class Step {
+public class Step implements Parcelable{
     @SerializedName("id")
     private int id;
     @SerializedName("shortDescription")
@@ -17,6 +20,14 @@ public class Step {
     private String videoURL;
     @SerializedName("thumbnailURL")
     private String thumbnailURL;
+
+    public Step(Parcel parcel){
+        id = parcel.readInt();
+        shortDescription = parcel.readString();
+        description = parcel.readString();
+        videoURL = parcel.readString();
+        thumbnailURL = parcel.readString();
+    }
 
     public int getId() {
         return id;
@@ -57,4 +68,30 @@ public class Step {
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
     }
+
+    @Override
+    public int describeContents() {
+        return hashCode();
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(shortDescription);
+        parcel.writeString(description);
+        parcel.writeString(videoURL);
+        parcel.writeString(thumbnailURL);
+    }
+
+    public static final Parcelable.Creator<Step> CREATOR = new Parcelable.Creator<Step>(){
+        @Override
+        public Step createFromParcel(Parcel parcel) {
+            return new Step(parcel);
+        }
+
+        @Override
+        public Step[] newArray(int i) {
+            return new Step[0];
+        }
+    };
 }

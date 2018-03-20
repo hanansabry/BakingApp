@@ -1,5 +1,8 @@
 package com.hanan.and.udacity.bakingapp.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 import com.hanan.and.udacity.bakingapp.R;
 
@@ -9,7 +12,7 @@ import java.util.List;
  * Created by Nono on 3/17/2018.
  */
 
-public class Recipe {
+public class Recipe implements Parcelable{
     @SerializedName("id")
     private int id;
     @SerializedName("name")
@@ -29,6 +32,15 @@ public class Recipe {
             R.drawable.moist_yellow_cake,
             R.drawable.cheesecake
     };
+
+    public Recipe(Parcel parcel){
+        id = parcel.readInt();
+        name = parcel.readString();
+        ingredients = parcel.readArrayList(getClass().getClassLoader());
+        steps = parcel.readArrayList(getClass().getClassLoader());
+        servings = parcel.readInt();
+        image = parcel.readString();
+    }
 
     public int getId() {
         return id;
@@ -81,4 +93,31 @@ public class Recipe {
     public void setImage(String image) {
         this.image = image;
     }
+
+    @Override
+    public int describeContents() {
+        return hashCode();
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(name);
+        parcel.writeList(ingredients);
+        parcel.writeList(steps);
+        parcel.writeInt(servings);
+        parcel.writeString(image);
+    }
+
+    public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
+        @Override
+        public Recipe createFromParcel(Parcel parcel) {
+            return new Recipe(parcel);
+        }
+
+        @Override
+        public Recipe[] newArray(int i) {
+            return new Recipe[0];
+        }
+    };
 }

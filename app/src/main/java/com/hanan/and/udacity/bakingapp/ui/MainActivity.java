@@ -28,6 +28,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+//Resource : Android working with Card View and Recycler View
+//https://www.androidhive.info/2016/05/android-working-with-card-view-and-recycler-view/
 
 public class MainActivity extends AppCompatActivity {
 

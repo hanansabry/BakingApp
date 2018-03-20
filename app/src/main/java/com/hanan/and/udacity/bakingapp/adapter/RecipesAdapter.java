@@ -1,6 +1,10 @@
 package com.hanan.and.udacity.bakingapp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -15,7 +19,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.hanan.and.udacity.bakingapp.R;
 import com.hanan.and.udacity.bakingapp.model.Recipe;
+import com.hanan.and.udacity.bakingapp.ui.MasterRecipeFragment;
+import com.hanan.and.udacity.bakingapp.ui.RecipeActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +30,11 @@ import java.util.List;
  */
 
 public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipeHolder> {
+    public static final String RECIPE_INGREDIENTS = "RECIPE_INGREDIENTS";
+    public static final String RECIPE_STEPS = "RECIPE_STEPS";
+    public static final String RECIPE_SERVINGS = "RECIPE_SERVINGS";
+    public static final String RECIPE_THUMBNAIL = "RECIPE_THUMBNAIL";
+    public static final String RECIPE = "RECIPE";
     private Context mContext;
     private List<Recipe> recipeList;
 
@@ -46,13 +58,6 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipeHo
         Glide.with(mContext)
                 .load(recipe.getImage())
                 .into(holder.thumbnail);
-
-//        holder.overflow.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showPopupMenu(view);
-//            }
-//        });
     }
 
     @Override
@@ -60,38 +65,29 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipeHo
         return recipeList.size();
     }
 
-    private void showPopupMenu(View view) {
-        // inflate menu
-        PopupMenu popup = new PopupMenu(mContext, view);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.recipe_menu, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.action_add_favourite:
-                        Toast.makeText(mContext, "Add to favourite", Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.action_play_next:
-                        Toast.makeText(mContext, "Play next", Toast.LENGTH_SHORT).show();
-                        return true;
-                    default:
-                }
-                return false;
-            }
-        });
-        popup.show();
-    }
-
-    public class RecipeHolder extends RecyclerView.ViewHolder {
+    public class RecipeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView title;
         public ImageView thumbnail;
+        int position;
 
         public RecipeHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.title);
             thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
-//            overflow = (ImageView) itemView.findViewById(R.id.overflow);
+            itemView.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View view) {
+            position = getAdapterPosition();
+            Recipe recipe = recipeList.get(position);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(RECIPE, recipe);
+
+            Intent intent = new Intent(mContext, RecipeActivity.class);
+            intent.putExtras(bundle);
+            mContext.startActivity(intent);
         }
     }
 }

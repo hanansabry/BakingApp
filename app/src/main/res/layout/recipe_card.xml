@@ -38,7 +38,8 @@
                 android:padding="@dimen/album_title_padding"
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/album_title"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:fontFamily="monospace"/>
 
             <!--<TextView-->
                 <!--android:id="@+id/servings"-->
