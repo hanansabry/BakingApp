@@ -31,10 +31,14 @@ public class StepFragment extends Fragment implements Step {
         stepNameTextView = rootView.findViewById(R.id.step_name);
 
         Bundle b = getArguments();
-        recipeStep = b.getParcelable("STEP_POSITION");
+        recipeStep = b.getParcelable("STEP");
         stepName = recipeStep.getShortDescription();
         stepDescription = recipeStep.getDescription();
 
+        if (RecipeActivity.twoPane) {
+            stepNameTextView.setText(stepName);
+            stepDescTextView.setText(stepDescription);
+        }
         return rootView;
     }
 

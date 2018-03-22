@@ -3,6 +3,7 @@ package com.hanan.and.udacity.bakingapp.ui;
 import android.content.Intent;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hanan.and.udacity.bakingapp.R;
@@ -23,40 +25,55 @@ import com.hanan.and.udacity.bakingapp.model.Step;
 
 import java.util.List;
 
-public class RecipeActivity extends AppCompatActivity {
+public class RecipeActivity extends AppCompatActivity implements MasterRecipeFragment.OnStepClickListener {
     private List<Ingredient> ingredients;
     private List<Step> steps;
     private String recipeName;
     private int recipeThumb;
     Recipe recipe;
+    public static boolean twoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
-        if (savedInstanceState != null) {
-            intent.putExtras(savedInstanceState);
-        }
         setContentView(R.layout.activity_recipe);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        initCollapsingToolbar();
-
         //add up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         recipe = bundle.getParcelable(RecipesAdapter.RECIPE);
         recipeThumb = recipe.getImage();
         recipeName = recipe.getName();
 
-        try {
-            Glide.with(this)
-                    .load(recipeThumb)
-                    .into((ImageView) findViewById(R.id.recipe_backdrop));
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (findViewById(R.id.two_pane_layout) != null) {
+            twoPane = true;
+            setTitle(recipeName);
+
+            if (savedInstanceState == null) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                StepFragment stepFragment = new StepFragment();
+                Bundle b = new Bundle();
+                b.putParcelable("STEP", recipe.getSteps().get(0));
+                stepFragment.setArguments(b);
+                // Add the fragment to its container using a transaction
+                fragmentManager.beginTransaction()
+                        .add(R.id.step_container, stepFragment)
+                        .commit();
+            }
+        } else {
+            twoPane = false;
+            initCollapsingToolbar();
+
+            try {
+                Glide.with(this)
+                        .load(recipeThumb)
+                        .into((ImageView) findViewById(R.id.recipe_backdrop));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -109,5 +126,24 @@ public class RecipeActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
 
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onStepSelected(Bundle bundle) {
+        int position = bundle.getInt(StepsAdapter.STEP_POSITION);
+        if (twoPane) {
+            StepFragment stepFragment = new StepFragment();
+            Bundle b = new Bundle();
+            b.putParcelable("STEP", recipe.getSteps().get(position));
+            stepFragment.setArguments(b);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.step_container, stepFragment)
+                    .commit();
+        } else {
+            Intent intent = new Intent(this, StepDetailsActivity.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
     }
 }

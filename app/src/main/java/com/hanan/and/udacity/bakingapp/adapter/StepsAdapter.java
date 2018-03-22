@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.hanan.and.udacity.bakingapp.R;
 import com.hanan.and.udacity.bakingapp.model.Step;
+import com.hanan.and.udacity.bakingapp.ui.MasterRecipeFragment;
 import com.hanan.and.udacity.bakingapp.ui.StepDetailsActivity;
 
 import java.util.ArrayList;
@@ -24,12 +25,19 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepHolder> 
 
     public static final String RECIPE_STEPS = "RECIPE_STEPS";
     public static final String STEP_POSITION = "STEP_POSITION";
-    Context mContext;
-    List<Step> mSteps;
+    private Context mContext;
+    private List<Step> mSteps;
+    private MasterRecipeFragment.OnStepClickListener mCallback;
 
     public StepsAdapter(Context mContext, List<Step> mSteps){
         this.mContext = mContext;
         this.mSteps = mSteps;
+    }
+
+    public StepsAdapter(Context mContext, List<Step> mSteps, MasterRecipeFragment.OnStepClickListener mCallback){
+        this.mContext = mContext;
+        this.mSteps = mSteps;
+        this.mCallback = mCallback;
     }
 
     @Override
@@ -61,12 +69,13 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepHolder> 
         @Override
         public void onClick(View view) {
             position = getAdapterPosition();
-            Intent intent = new Intent(mContext, StepDetailsActivity.class);
+//            Intent intent = new Intent(mContext, StepDetailsActivity.class);
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList(RECIPE_STEPS, (ArrayList) mSteps);
             bundle.putInt(STEP_POSITION, position);
-            intent.putExtras(bundle);
-            mContext.startActivity(intent);
+            mCallback.onStepSelected(bundle);
+//            intent.putExtras(bundle);
+//            mContext.startActivity(intent);
         }
     }
 }

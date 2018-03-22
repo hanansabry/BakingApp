@@ -1,5 +1,6 @@
 package com.hanan.and.udacity.bakingapp.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,10 +33,25 @@ public class MasterRecipeFragment extends Fragment {
     private List<Step> steps;
     private String recipeName;
     private int recipeThumb;
+    OnStepClickListener mCallback;
 
     private RecyclerView ingredientsRV, stepsRV;
 
-    public MasterRecipeFragment(){
+    public interface OnStepClickListener {
+        void onStepSelected(Bundle bundle);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (OnStepClickListener) context;
+        } catch (ClassCastException ex) {
+            throw new ClassCastException(context.toString() + " must implement OnStepClickListener");
+        }
+    }
+
+    public MasterRecipeFragment() {
     }
 
     @Nullable
@@ -60,7 +76,7 @@ public class MasterRecipeFragment extends Fragment {
         RecyclerView.LayoutManager layout2 = new LinearLayoutManager(getContext());
         stepsRV.setLayoutManager(layout2);
         stepsRV.addItemDecoration(new MyDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL, 0));
-        StepsAdapter stepsAdapter = new StepsAdapter(getContext(), steps);
+        StepsAdapter stepsAdapter = new StepsAdapter(getContext(), steps, mCallback);
         stepsRV.setAdapter(stepsAdapter);
         stepsAdapter.notifyDataSetChanged();
 

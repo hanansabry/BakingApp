@@ -33,7 +33,7 @@ public class StepperAdapter extends AbstractFragmentStepAdapter {
     public com.stepstone.stepper.Step createStep(int position) {
         StepFragment step = new StepFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelable("STEP_POSITION", mStepsList.get(position));
+        bundle.putParcelable("STEP", mStepsList.get(position));
         step.setArguments(bundle);
         return step;
     }
