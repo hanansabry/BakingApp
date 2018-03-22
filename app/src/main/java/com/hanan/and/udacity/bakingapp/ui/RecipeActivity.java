@@ -3,11 +3,13 @@ package com.hanan.and.udacity.bakingapp.ui;
 import android.content.Intent;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -26,21 +28,26 @@ public class RecipeActivity extends AppCompatActivity {
     private List<Step> steps;
     private String recipeName;
     private int recipeThumb;
-
-
+    Recipe recipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        if (savedInstanceState != null) {
+            intent.putExtras(savedInstanceState);
+        }
         setContentView(R.layout.activity_recipe);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         initCollapsingToolbar();
 
-        Intent intent = getIntent();
+        //add up navigation
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Bundle bundle = intent.getExtras();
-        Recipe recipe = bundle.getParcelable(RecipesAdapter.RECIPE);
+        recipe = bundle.getParcelable(RecipesAdapter.RECIPE);
         recipeThumb = recipe.getImage();
         recipeName = recipe.getName();
 
@@ -81,4 +88,26 @@ public class RecipeActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(RecipesAdapter.RECIPE, recipe);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 }

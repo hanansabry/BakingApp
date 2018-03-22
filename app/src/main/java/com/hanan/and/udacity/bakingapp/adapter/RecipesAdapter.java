@@ -30,10 +30,7 @@ import java.util.List;
  */
 
 public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipeHolder> {
-    public static final String RECIPE_INGREDIENTS = "RECIPE_INGREDIENTS";
-    public static final String RECIPE_STEPS = "RECIPE_STEPS";
-    public static final String RECIPE_SERVINGS = "RECIPE_SERVINGS";
-    public static final String RECIPE_THUMBNAIL = "RECIPE_THUMBNAIL";
+
     public static final String RECIPE = "RECIPE";
     private Context mContext;
     private List<Recipe> recipeList;
