@@ -32,6 +32,7 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
     private int recipeThumb;
     Recipe recipe;
     public static boolean twoPane;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,17 +53,20 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
             twoPane = true;
             setTitle(recipeName);
 
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            StepFragment stepFragment = new StepFragment();
+            Bundle b = new Bundle();
             if (savedInstanceState == null) {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                StepFragment stepFragment = new StepFragment();
-                Bundle b = new Bundle();
                 b.putParcelable("STEP", recipe.getSteps().get(0));
-                stepFragment.setArguments(b);
-                // Add the fragment to its container using a transaction
-                fragmentManager.beginTransaction()
-                        .add(R.id.step_container, stepFragment)
-                        .commit();
+            }else{
+                position = savedInstanceState.getInt("POSITION");
+                b.putParcelable("STEP", recipe.getSteps().get(position));
             }
+            stepFragment.setArguments(b);
+            // Add the fragment to its container using a transaction
+            fragmentManager.beginTransaction()
+                    .add(R.id.step_container, stepFragment)
+                    .commit();
         } else {
             twoPane = false;
             initCollapsingToolbar();
@@ -118,24 +122,18 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(RecipesAdapter.RECIPE, recipe);
+        outState.putInt("POSITION", position);
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    @Override
     public void onStepSelected(Bundle bundle) {
-        int position = bundle.getInt(StepsAdapter.STEP_POSITION);
+        position = bundle.getInt(StepsAdapter.STEP_POSITION);
         if (twoPane) {
             StepFragment stepFragment = new StepFragment();
-            Bundle b = new Bundle();
-            b.putParcelable("STEP", recipe.getSteps().get(position));
-            stepFragment.setArguments(b);
+//            Bundle b = new Bundle();
+            bundle.putParcelable("STEP", recipe.getSteps().get(position));
+            stepFragment.setArguments(bundle);
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.step_container, stepFragment)
