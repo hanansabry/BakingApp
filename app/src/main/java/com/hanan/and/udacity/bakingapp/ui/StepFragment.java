@@ -64,7 +64,10 @@ public class StepFragment extends Fragment {
         stepName = recipeStep.getShortDescription();
         stepDescription = recipeStep.getDescription();
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        int width = getResources().getConfiguration().smallestScreenWidthDp;
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
+                && getResources().getConfiguration().smallestScreenWidthDp < 600) {
             ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
             hideSystemUI();
         } else {
@@ -73,14 +76,6 @@ public class StepFragment extends Fragment {
 
             stepNameTextView.setText(stepName);
             stepDescTextView.setText(stepDescription);
-        }
-        initializePlayer(Uri.parse(recipeStep.getVideoURL()));
-
-        if (recipeStep.getVideoURL() == null || recipeStep.getVideoURL().equals("")) {
-            mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(
-                    getResources(), R.drawable.no_video
-            ));
-            mPlayerView.hideController();
         }
         return frameLayout;
     }
@@ -98,6 +93,7 @@ public class StepFragment extends Fragment {
                     getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
+            mExoPlayer.seekTo(currentPosition);
         }
     }
 
@@ -120,22 +116,39 @@ public class StepFragment extends Fragment {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE);
     }
 
+    private long currentPosition = 5000;
     @Override
     public void onPause() {
         super.onPause();
-//        releasePlayer();
+        Toast.makeText(getContext(), "current position : " + currentPosition, Toast.LENGTH_LONG).show();
+        releasePlayer();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Toast.makeText(getContext(), "saved position : " + currentPosition, Toast.LENGTH_LONG).show();
+        initializePlayer(Uri.parse(recipeStep.getVideoURL()));
+
+        if (recipeStep.getVideoURL() == null || recipeStep.getVideoURL().equals("")) {
+            mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(
+                    getResources(), R.drawable.no_video
+            ));
+            mPlayerView.hideController();
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Toast.makeText(getContext(), "fragment save state : " + mExoPlayer.getCurrentPosition(), Toast.LENGTH_SHORT).show();
+        outState.putLong("POSITION", currentPosition);
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        Toast.makeText(getContext(), "fragment restore state : " + mExoPlayer.getCurrentPosition(), Toast.LENGTH_SHORT).show();
+        if(savedInstanceState != null) {
+            currentPosition = savedInstanceState.getLong("POSITION");
+        }
     }
-
 }

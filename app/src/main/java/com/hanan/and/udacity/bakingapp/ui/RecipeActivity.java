@@ -54,13 +54,12 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
         MasterRecipeFragment recipeFragment = new MasterRecipeFragment();
         recipeFragment.setArguments(bundle);
         fragmentManager.beginTransaction()
-                .add(R.id.master_recipe_fragment, recipeFragment)
+                .replace(R.id.master_recipe_fragment, recipeFragment)
                 .commit();
 
         if (findViewById(R.id.two_pane_layout) != null) {
             twoPane = true;
             setTitle(recipeName);
-
 
             StepFragment stepFragment = new StepFragment();
             Bundle b = new Bundle();
@@ -73,7 +72,7 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
             stepFragment.setArguments(b);
             // Add the fragment to its container using a transaction
             fragmentManager.beginTransaction()
-                    .add(R.id.step_container, stepFragment)
+                    .replace(R.id.step_container, stepFragment)
                     .commit();
         } else {
             twoPane = false;
