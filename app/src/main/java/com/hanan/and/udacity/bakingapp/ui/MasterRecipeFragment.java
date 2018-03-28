@@ -48,6 +48,11 @@ public class MasterRecipeFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
     public MasterRecipeFragment() {
     }
 
@@ -56,7 +61,7 @@ public class MasterRecipeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_master_recipe, container, false);
 
-        Bundle bundle = getActivity().getIntent().getExtras();
+        Bundle bundle = getArguments();
         Recipe recipe = bundle.getParcelable(RecipesAdapter.RECIPE);
 
         ingredients = recipe.getIngredients();

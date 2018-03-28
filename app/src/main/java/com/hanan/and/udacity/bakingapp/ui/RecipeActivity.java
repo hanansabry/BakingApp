@@ -1,6 +1,7 @@
 package com.hanan.and.udacity.bakingapp.ui;
 
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.FragmentManager;
@@ -49,11 +50,18 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
         recipeThumb = recipe.getImage();
         recipeName = recipe.getName();
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        MasterRecipeFragment recipeFragment = new MasterRecipeFragment();
+        recipeFragment.setArguments(bundle);
+        fragmentManager.beginTransaction()
+                .add(R.id.master_recipe_fragment, recipeFragment)
+                .commit();
+
         if (findViewById(R.id.two_pane_layout) != null) {
             twoPane = true;
             setTitle(recipeName);
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
+
             StepFragment stepFragment = new StepFragment();
             Bundle b = new Bundle();
             if (savedInstanceState == null) {
@@ -121,12 +129,6 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt("POSITION", position);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     public void onStepSelected(Bundle bundle) {
         position = bundle.getInt(StepsAdapter.STEP_POSITION);
         if (twoPane) {
@@ -144,4 +146,5 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
             startActivity(intent);
         }
     }
+
 }

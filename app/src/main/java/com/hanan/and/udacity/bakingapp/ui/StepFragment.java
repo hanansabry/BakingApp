@@ -1,5 +1,6 @@
 package com.hanan.and.udacity.bakingapp.ui;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,42 +42,47 @@ import java.util.HashMap;
  * Created by Nono on 3/21/2018.
  */
 
-public class StepFragment extends Fragment implements Step {
+public class StepFragment extends Fragment {
     private TextView stepDescTextView, stepNameTextView;
     private String stepDescription, stepName;
     private SimpleExoPlayerView mPlayerView;
     private SimpleExoPlayer mExoPlayer;
     private com.hanan.and.udacity.bakingapp.model.Step recipeStep;
 
+    private FrameLayout frameLayout;
+    private View rootView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        frameLayout = new FrameLayout(getActivity());
         View rootView = inflater.inflate(R.layout.fragment_step, container, false);
-        stepDescTextView = rootView.findViewById(R.id.step_description);
-        stepNameTextView = rootView.findViewById(R.id.step_name);
+        frameLayout.addView(rootView);
         mPlayerView = rootView.findViewById(R.id.player_view);
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-        }
         Bundle b = getArguments();
         recipeStep = b.getParcelable("STEP");
         stepName = recipeStep.getShortDescription();
         stepDescription = recipeStep.getDescription();
 
-        if (RecipeActivity.twoPane) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+            hideSystemUI();
+        } else {
+            stepDescTextView = rootView.findViewById(R.id.step_description);
+            stepNameTextView = rootView.findViewById(R.id.step_name);
+
             stepNameTextView.setText(stepName);
             stepDescTextView.setText(stepDescription);
         }
+        initializePlayer(Uri.parse(recipeStep.getVideoURL()));
+
         if (recipeStep.getVideoURL() == null || recipeStep.getVideoURL().equals("")) {
             mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(
-                    getResources(), R.drawable.app_cover
+                    getResources(), R.drawable.no_video
             ));
             mPlayerView.hideController();
         }
-
-        initializePlayer(Uri.parse(recipeStep.getVideoURL()));
-        return rootView;
+        return frameLayout;
     }
 
     public void initializePlayer(Uri mediaUri) {
@@ -101,49 +109,33 @@ public class StepFragment extends Fragment implements Step {
         }
     }
 
-    @Nullable
-    @Override
-    public VerificationError verifyStep() {
-        return null;
+    // Src: https://developer.android.com/training/system-ui/immersive.html
+    private void hideSystemUI() {
+        getActivity().getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
     }
 
     @Override
-    public void onSelected() {
-        stepNameTextView.setText(stepName);
-        stepDescTextView.setText(stepDescription);
+    public void onPause() {
+        super.onPause();
+//        releasePlayer();
     }
 
     @Override
-    public void onError(@NonNull VerificationError error) {
-        Toast.makeText(getContext(), "Error", Toast.LENGTH_LONG).show();
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Toast.makeText(getContext(), "fragment save state : " + mExoPlayer.getCurrentPosition(), Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Toast.makeText(getContext(), "fragment restore state : " + mExoPlayer.getCurrentPosition(), Toast.LENGTH_SHORT).show();
+    }
 
-    //Resource : Get Thumbnail Video from URL Android
-    //Link : https://medium.com/@mujtahidah/get-thumbnail-video-from-url-android-f71533168228
-//    public static Bitmap retriveVideoFrameFromVideo(String videoPath)
-//            throws Throwable {
-//        Bitmap bitmap = null;
-//        MediaMetadataRetriever mediaMetadataRetriever = null;
-//        try {
-//            mediaMetadataRetriever = new MediaMetadataRetriever();
-//            if (Build.VERSION.SDK_INT >= 14)
-//                mediaMetadataRetriever.setDataSource(videoPath, new HashMap<String, String>());
-//            else
-//                mediaMetadataRetriever.setDataSource(videoPath);
-//
-//            bitmap = mediaMetadataRetriever.getFrameAtTime(1, MediaMetadataRetriever.OPTION_CLOSEST);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new Throwable(
-//                    "Exception in retriveVideoFrameFromVideo(String videoPath)"
-//                            + e.getMessage());
-//
-//        } finally {
-//            if (mediaMetadataRetriever != null) {
-//                mediaMetadataRetriever.release();
-//            }
-//        }
-//        return bitmap;
-//    }
 }

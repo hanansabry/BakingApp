@@ -69,13 +69,10 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepHolder> 
         @Override
         public void onClick(View view) {
             position = getAdapterPosition();
-//            Intent intent = new Intent(mContext, StepDetailsActivity.class);
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList(RECIPE_STEPS, (ArrayList) mSteps);
             bundle.putInt(STEP_POSITION, position);
             mCallback.onStepSelected(bundle);
-//            intent.putExtras(bundle);
-//            mContext.startActivity(intent);
         }
     }
 }
