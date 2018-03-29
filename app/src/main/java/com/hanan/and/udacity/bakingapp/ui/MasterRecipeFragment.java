@@ -62,7 +62,7 @@ public class MasterRecipeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_master_recipe, container, false);
 
         Bundle bundle = getArguments();
-        Recipe recipe = bundle.getParcelable(RecipesAdapter.RECIPE);
+        Recipe recipe = bundle.getParcelable(Recipe.RECIPE);
 
         ingredients = recipe.getIngredients();
         steps = recipe.getSteps();

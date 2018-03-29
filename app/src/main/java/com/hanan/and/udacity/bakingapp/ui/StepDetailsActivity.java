@@ -29,6 +29,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.hanan.and.udacity.bakingapp.R;
 import com.hanan.and.udacity.bakingapp.adapter.StepsAdapter;
+import com.hanan.and.udacity.bakingapp.model.Recipe;
 import com.hanan.and.udacity.bakingapp.model.Step;
 import com.stepstone.stepper.StepperLayout;
 
@@ -44,6 +45,7 @@ public class StepDetailsActivity extends AppCompatActivity {
     private List<Step> steps;
     private Button next, previous;
     private TextView stepsProgress;
+    private String recipeName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,26 +57,37 @@ public class StepDetailsActivity extends AppCompatActivity {
         stepsProgress = findViewById(R.id.steps_progress);
         Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
-        setTitle("Step Details");
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         StepFragment stepFragment = new StepFragment();
-        if(savedInstanceState != null){
-            steps = savedInstanceState.getParcelableArrayList(StepsAdapter.RECIPE_STEPS);
-            stepPosition = savedInstanceState.getInt(StepsAdapter.STEP_POSITION);
+        if (savedInstanceState != null) {
+            recipeName = savedInstanceState.getString(Recipe.RECIPE_NAME);
+            steps = savedInstanceState.getParcelableArrayList(Recipe.RECIPE_STEPS);
+            stepPosition = savedInstanceState.getInt(Recipe.RECIPE_STEP_POSITION);
             addStepFragment(stepFragment, false, savedInstanceState);
-        }else {
+        } else {
             Bundle bundle = getIntent().getExtras();
-            steps = bundle.getParcelableArrayList(StepsAdapter.RECIPE_STEPS);
-            stepPosition = bundle.getInt(StepsAdapter.STEP_POSITION);
-            bundle.putParcelable("STEP", steps.get(stepPosition));
+            recipeName = bundle.getString(Recipe.RECIPE_NAME);
+            steps = bundle.getParcelableArrayList(Recipe.RECIPE_STEPS);
+            stepPosition = bundle.getInt(Recipe.RECIPE_STEP_POSITION);
+            bundle.putParcelable(Recipe.RECIPE_STEP, steps.get(stepPosition));
             addStepFragment(stepFragment, true, bundle);
         }
 
+        setTitle(recipeName);
         stepsProgress.setText(stepPosition + " / " + (steps.size() - 1));
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             findViewById(R.id.stepper_layout).setVisibility(View.GONE);
+        }
+
+        if (stepPosition == 0) {
+            previous.setClickable(false);
+            previous.setText("");
+        } else if (stepPosition == steps.size() - 1) {
+            next.setClickable(false);
+            next.setText("COMPLETE");
         }
     }
 
@@ -83,7 +96,7 @@ public class StepDetailsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
+                onBackPressed();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -107,10 +120,18 @@ public class StepDetailsActivity extends AppCompatActivity {
         stepPosition++;
         Step nextStep = steps.get(stepPosition);
         Bundle b = new Bundle();
-        b.putParcelable("STEP", steps.get(stepPosition));
+        b.putParcelable(Recipe.RECIPE_STEP, steps.get(stepPosition));
 
         StepFragment fragment = new StepFragment();
         addStepFragment(fragment, false, b);
+
+        if (stepPosition == 1) {
+            previous.setClickable(true);
+            previous.setText(R.string.previous);
+        } else if (stepPosition == steps.size() - 1) {
+            next.setClickable(false);
+            next.setText("COMPLETE");
+        }
         stepsProgress.setText(stepPosition + " / " + (steps.size() - 1));
     }
 
@@ -118,22 +139,28 @@ public class StepDetailsActivity extends AppCompatActivity {
         stepPosition--;
         Step nextStep = steps.get(stepPosition);
         Bundle b = new Bundle();
-        b.putParcelable("STEP", steps.get(stepPosition));
+        b.putParcelable(Recipe.RECIPE_STEP, steps.get(stepPosition));
         StepFragment fragment = new StepFragment();
         addStepFragment(fragment, false, b);
+
+        if(stepPosition == 0){
+            previous.setClickable(false);
+            previous.setText("");
+        }else if(stepPosition == steps.size() - 2){
+            next.setClickable(true);
+            next.setText(R.string.next);
+        }
+
         stepsProgress.setText(stepPosition + " / " + (steps.size() - 1));
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(StepsAdapter.RECIPE_STEPS, (ArrayList) steps);
-        outState.putInt(StepsAdapter.STEP_POSITION, stepPosition);
-        outState.putParcelable("STEP", steps.get(stepPosition));
+        outState.putParcelableArrayList(Recipe.RECIPE_STEPS, (ArrayList) steps);
+        outState.putInt(Recipe.RECIPE_STEP_POSITION, stepPosition);
+        outState.putParcelable(Recipe.RECIPE_STEP, steps.get(stepPosition));
+        outState.putString(Recipe.RECIPE_NAME, recipeName);
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-    }
 }

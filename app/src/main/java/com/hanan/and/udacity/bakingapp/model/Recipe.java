@@ -13,6 +13,12 @@ import java.util.List;
  */
 
 public class Recipe implements Parcelable{
+    public static final String RECIPE = "recipe";
+    public static final String RECIPE_STEPS = "recipe_steps";
+    public static final String RECIPE_STEP = "step";
+    public static final String RECIPE_NAME = "recipe_name";
+    public static final String RECIPE_STEP_POSITION = "step_position";
+
     @SerializedName("id")
     private int id;
     @SerializedName("name")

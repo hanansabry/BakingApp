@@ -23,13 +23,14 @@
             android:id="@+id/step_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="9"/>
+            android:layout_weight="10" />
 
         <LinearLayout
             android:id="@+id/stepper_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:background="@android:color/white"
             android:orientation="horizontal">
 
             <Button
@@ -37,25 +38,29 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Previous"
-                android:onClick="onPreviousClicked"/>
+                android:onClick="onPreviousClicked"
+                android:text="@string/previous"
+                android:clickable="true"
+                android:background="?android:selectableItemBackground"/>
 
             <TextView
                 android:id="@+id/steps_progress"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:text=" 1 / 8"
-                android:textSize="28sp"
-                android:gravity="center"/>
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/next"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Next"
-                android:onClick="onNextClicked"/>
+                android:onClick="onNextClicked"
+                android:text="@string/next"
+                android:clickable="true"
+                android:background="?android:selectableItemBackground"/>
 
         </LinearLayout>
 

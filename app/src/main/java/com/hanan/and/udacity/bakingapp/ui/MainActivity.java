@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private RecipesAdapter recipesAdapter;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        recyclerView = (RecyclerView) findViewById(R.id.recipes_rv);
+        progressBar = findViewById(R.id.progress_bar);
+        recyclerView = findViewById(R.id.recipes_rv);
         RecyclerView.LayoutManager mLayoutManager = null;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             mLayoutManager = new GridLayoutManager(this, 2);
@@ -67,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(1, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         getRecipes();
-
     }
 
     /**
@@ -156,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
+                progressBar.setVisibility(View.GONE);
                 List<Recipe> recipes = response.body();
                 recipesAdapter = new RecipesAdapter(MainActivity.this, recipes);
                 recyclerView.setAdapter(recipesAdapter);

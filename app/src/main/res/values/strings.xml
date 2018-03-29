@@ -2,4 +2,6 @@
     <string name="app_name">BakingApp</string>
     <string name="backdrop_title">Baking App</string>
     <string name="backdrop_subtitle">Sharing my best receips</string>
+    <string name="previous"><![CDATA[< Previous]]></string>
+    <string name="next"><![CDATA[Next >]]></string>
 </resources>

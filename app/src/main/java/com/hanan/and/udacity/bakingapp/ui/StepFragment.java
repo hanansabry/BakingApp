@@ -33,6 +33,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.hanan.and.udacity.bakingapp.R;
+import com.hanan.and.udacity.bakingapp.model.Recipe;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
@@ -60,7 +61,7 @@ public class StepFragment extends Fragment {
         mPlayerView = rootView.findViewById(R.id.player_view);
 
         Bundle b = getArguments();
-        recipeStep = b.getParcelable("STEP");
+        recipeStep = b.getParcelable(Recipe.RECIPE_STEP);
         stepName = recipeStep.getShortDescription();
         stepDescription = recipeStep.getDescription();
 
@@ -93,7 +94,6 @@ public class StepFragment extends Fragment {
                     getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
-            mExoPlayer.seekTo(currentPosition);
         }
     }
 
@@ -116,18 +116,15 @@ public class StepFragment extends Fragment {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE);
     }
 
-    private long currentPosition = 5000;
     @Override
     public void onPause() {
         super.onPause();
-        Toast.makeText(getContext(), "current position : " + currentPosition, Toast.LENGTH_LONG).show();
         releasePlayer();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Toast.makeText(getContext(), "saved position : " + currentPosition, Toast.LENGTH_LONG).show();
         initializePlayer(Uri.parse(recipeStep.getVideoURL()));
 
         if (recipeStep.getVideoURL() == null || recipeStep.getVideoURL().equals("")) {
@@ -135,20 +132,6 @@ public class StepFragment extends Fragment {
                     getResources(), R.drawable.no_video
             ));
             mPlayerView.hideController();
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putLong("POSITION", currentPosition);
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if(savedInstanceState != null) {
-            currentPosition = savedInstanceState.getLong("POSITION");
         }
     }
 }

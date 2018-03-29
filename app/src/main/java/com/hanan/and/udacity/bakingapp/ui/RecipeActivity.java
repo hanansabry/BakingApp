@@ -44,9 +44,10 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
         setSupportActionBar(toolbar);
         //add up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        recipe = bundle.getParcelable(RecipesAdapter.RECIPE);
+        recipe = bundle.getParcelable(Recipe.RECIPE);
         recipeThumb = recipe.getImage();
         recipeName = recipe.getName();
 
@@ -64,10 +65,10 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
             StepFragment stepFragment = new StepFragment();
             Bundle b = new Bundle();
             if (savedInstanceState == null) {
-                b.putParcelable("STEP", recipe.getSteps().get(0));
+                b.putParcelable(Recipe.RECIPE_STEP, recipe.getSteps().get(0));
             }else{
-                position = savedInstanceState.getInt("POSITION");
-                b.putParcelable("STEP", recipe.getSteps().get(position));
+                position = savedInstanceState.getInt(Recipe.RECIPE_STEP_POSITION);
+                b.putParcelable(Recipe.RECIPE_STEP, recipe.getSteps().get(position));
             }
             stepFragment.setArguments(b);
             // Add the fragment to its container using a transaction
@@ -129,11 +130,10 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
 
     @Override
     public void onStepSelected(Bundle bundle) {
-        position = bundle.getInt(StepsAdapter.STEP_POSITION);
+        position = bundle.getInt(Recipe.RECIPE_STEP_POSITION);
         if (twoPane) {
             StepFragment stepFragment = new StepFragment();
-//            Bundle b = new Bundle();
-            bundle.putParcelable("STEP", recipe.getSteps().get(position));
+            bundle.putParcelable(Recipe.RECIPE_STEP, recipe.getSteps().get(position));
             stepFragment.setArguments(bundle);
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
@@ -141,6 +141,7 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
                     .commit();
         } else {
             Intent intent = new Intent(this, StepDetailsActivity.class);
+            bundle.putString(Recipe.RECIPE_NAME, recipeName);
             intent.putExtras(bundle);
             startActivity(intent);
         }

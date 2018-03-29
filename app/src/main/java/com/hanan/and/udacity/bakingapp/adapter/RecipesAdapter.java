@@ -30,8 +30,6 @@ import java.util.List;
  */
 
 public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipeHolder> {
-
-    public static final String RECIPE = "RECIPE";
     private Context mContext;
     private List<Recipe> recipeList;
 
@@ -80,7 +78,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipeHo
             position = getAdapterPosition();
             Recipe recipe = recipeList.get(position);
             Bundle bundle = new Bundle();
-            bundle.putParcelable(RECIPE, recipe);
+            bundle.putParcelable(Recipe.RECIPE, recipe);
 
             Intent intent = new Intent(mContext, RecipeActivity.class);
             intent.putExtras(bundle);
