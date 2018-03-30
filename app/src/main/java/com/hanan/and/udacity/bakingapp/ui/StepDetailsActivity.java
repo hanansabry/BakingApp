@@ -52,6 +52,12 @@ public class StepDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_details);
 
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            findViewById(R.id.stepper_layout).setVisibility(View.GONE);
+        }else{
+
+        }
+
         next = findViewById(R.id.next);
         previous = findViewById(R.id.previous);
         stepsProgress = findViewById(R.id.steps_progress);
@@ -77,10 +83,6 @@ public class StepDetailsActivity extends AppCompatActivity {
 
         setTitle(recipeName);
         stepsProgress.setText(stepPosition + " / " + (steps.size() - 1));
-
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            findViewById(R.id.stepper_layout).setVisibility(View.GONE);
-        }
 
         if (stepPosition == 0) {
             previous.setClickable(false);
@@ -162,5 +164,4 @@ public class StepDetailsActivity extends AppCompatActivity {
         outState.putParcelable(Recipe.RECIPE_STEP, steps.get(stepPosition));
         outState.putString(Recipe.RECIPE_NAME, recipeName);
     }
-
 }

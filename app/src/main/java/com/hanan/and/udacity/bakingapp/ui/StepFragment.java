@@ -52,6 +52,7 @@ public class StepFragment extends Fragment {
 
     private FrameLayout frameLayout;
     private View rootView;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,6 +79,20 @@ public class StepFragment extends Fragment {
             stepNameTextView.setText(stepName);
             stepDescTextView.setText(stepDescription);
         }
+        if (savedInstanceState != null) {
+            currentWindow = savedInstanceState.getInt("CURRENT_WINDOW");
+            playbackPosition = savedInstanceState.getLong("PLAY_BACK_POSITION");
+            playWhenReady = savedInstanceState.getBoolean("PLAY_WHEN_READY");
+        }
+        initializePlayer(Uri.parse(recipeStep.getVideoURL()));
+
+        if (recipeStep.getVideoURL() == null || recipeStep.getVideoURL().equals("")) {
+            mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(
+                    getResources(), R.drawable.no_video
+            ));
+            mPlayerView.hideController();
+        }
+
         return frameLayout;
     }
 
@@ -93,12 +108,17 @@ public class StepFragment extends Fragment {
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                     getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
+            mExoPlayer.setPlayWhenReady(playWhenReady);
+            mExoPlayer.seekTo(currentWindow, playbackPosition);
         }
     }
 
+
     private void releasePlayer() {
         if (mExoPlayer != null) {
+            playbackPosition = mExoPlayer.getCurrentPosition();
+            currentWindow = mExoPlayer.getCurrentWindowIndex();
+            playWhenReady = mExoPlayer.getPlayWhenReady();
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
@@ -125,13 +145,17 @@ public class StepFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        initializePlayer(Uri.parse(recipeStep.getVideoURL()));
+    }
 
-        if (recipeStep.getVideoURL() == null || recipeStep.getVideoURL().equals("")) {
-            mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(
-                    getResources(), R.drawable.no_video
-            ));
-            mPlayerView.hideController();
-        }
+    private long playbackPosition;
+    private int currentWindow;
+    private boolean playWhenReady = true;
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("PLAY_BACK_POSITION", playbackPosition);
+        outState.putInt("CURRENT_WINDOW", currentWindow);
+        outState.putBoolean("PLAY_WHEN_READY", playWhenReady);
     }
 }

@@ -4,4 +4,6 @@
     <string name="backdrop_subtitle">Sharing my best receips</string>
     <string name="previous"><![CDATA[< Previous]]></string>
     <string name="next"><![CDATA[Next >]]></string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

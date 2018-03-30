@@ -22,6 +22,8 @@
                 android:id="@+id/thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/album_cover_height"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
                 android:scaleType="fitXY" />
 
             <TextView
@@ -29,8 +31,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/thumbnail"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
                 android:fontFamily="monospace"
                 android:gravity="center"
                 android:padding="@dimen/album_title_padding"
