@@ -46,51 +46,57 @@ public class StepDetailsActivity extends AppCompatActivity {
     private Button next, previous;
     private TextView stepsProgress;
     private String recipeName;
+    private FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step_details);
 
+        fragmentManager = getSupportFragmentManager();
+        Bundle bundle;
+        if (savedInstanceState != null) {
+            bundle = savedInstanceState;
+        } else {
+            bundle = getIntent().getExtras();
+        }
+
+        recipeName = bundle.getString(Recipe.RECIPE_NAME);
+        steps = bundle.getParcelableArrayList(Recipe.RECIPE_STEPS);
+        stepPosition = bundle.getInt(Recipe.RECIPE_STEP_POSITION);
+        bundle.putParcelable(Recipe.RECIPE_STEP, steps.get(stepPosition));
+
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             findViewById(R.id.stepper_layout).setVisibility(View.GONE);
-        }else{
-
-        }
-
-        next = findViewById(R.id.next);
-        previous = findViewById(R.id.previous);
-        stepsProgress = findViewById(R.id.steps_progress);
-        Toolbar toolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        StepFragment stepFragment = new StepFragment();
-        if (savedInstanceState != null) {
-            recipeName = savedInstanceState.getString(Recipe.RECIPE_NAME);
-            steps = savedInstanceState.getParcelableArrayList(Recipe.RECIPE_STEPS);
-            stepPosition = savedInstanceState.getInt(Recipe.RECIPE_STEP_POSITION);
-            addStepFragment(stepFragment, false, savedInstanceState);
         } else {
-            Bundle bundle = getIntent().getExtras();
-            recipeName = bundle.getString(Recipe.RECIPE_NAME);
-            steps = bundle.getParcelableArrayList(Recipe.RECIPE_STEPS);
-            stepPosition = bundle.getInt(Recipe.RECIPE_STEP_POSITION);
-            bundle.putParcelable(Recipe.RECIPE_STEP, steps.get(stepPosition));
-            addStepFragment(stepFragment, true, bundle);
+            next = findViewById(R.id.next);
+            previous = findViewById(R.id.previous);
+            stepsProgress = findViewById(R.id.steps_progress);
+            Toolbar toolbar = findViewById(R.id.my_toolbar);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            setTitle(recipeName);
+            stepsProgress.setText(stepPosition + " / " + (steps.size() - 1));
+
+            if (stepPosition == 0) {
+                previous.setClickable(false);
+                previous.setText("");
+            } else if (stepPosition == steps.size() - 1) {
+                next.setClickable(false);
+                next.setText("COMPLETE");
+            }
         }
 
-        setTitle(recipeName);
-        stepsProgress.setText(stepPosition + " / " + (steps.size() - 1));
-
-        if (stepPosition == 0) {
-            previous.setClickable(false);
-            previous.setText("");
-        } else if (stepPosition == steps.size() - 1) {
-            next.setClickable(false);
-            next.setText("COMPLETE");
+        //            addStepFragment(bundle);
+        StepFragment stepFragment = (StepFragment) fragmentManager.findFragmentById(R.id.step_container);
+        if(stepFragment == null){
+            stepFragment = new StepFragment();
         }
+        stepFragment.setArguments(bundle);
+        fragmentManager.beginTransaction()
+                .replace(R.id.step_container, stepFragment)
+                .commit();
     }
 
     @Override
@@ -104,19 +110,17 @@ public class StepDetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void addStepFragment(StepFragment stepFragment, boolean add, Bundle bundle) {
-        stepFragment.setArguments(bundle);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        if (add) {
-            fragmentManager.beginTransaction()
-                    .add(R.id.step_container, stepFragment)
-                    .commit();
-        } else {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.step_container, stepFragment)
-                    .commit();
+    public void addStepFragment(Bundle bundle) {
+        StepFragment stepFragment = (StepFragment) fragmentManager.findFragmentById(R.id.step_container);
+        if(stepFragment == null){
+            stepFragment = new StepFragment();
         }
+        stepFragment.setArguments(bundle);
+        fragmentManager.beginTransaction()
+                .replace(R.id.step_container, stepFragment)
+                .commit();
     }
+
 
     public void onNextClicked(View view) {
         stepPosition++;
@@ -124,8 +128,13 @@ public class StepDetailsActivity extends AppCompatActivity {
         Bundle b = new Bundle();
         b.putParcelable(Recipe.RECIPE_STEP, steps.get(stepPosition));
 
-        StepFragment fragment = new StepFragment();
-        addStepFragment(fragment, false, b);
+//        addStepFragment(b);
+
+        StepFragment stepFragment = new StepFragment();
+        stepFragment.setArguments(b);
+        fragmentManager.beginTransaction()
+                .replace(R.id.step_container, stepFragment)
+                .commit();
 
         if (stepPosition == 1) {
             previous.setClickable(true);
@@ -140,15 +149,21 @@ public class StepDetailsActivity extends AppCompatActivity {
     public void onPreviousClicked(View view) {
         stepPosition--;
         Step nextStep = steps.get(stepPosition);
+
         Bundle b = new Bundle();
         b.putParcelable(Recipe.RECIPE_STEP, steps.get(stepPosition));
-        StepFragment fragment = new StepFragment();
-        addStepFragment(fragment, false, b);
+//        addStepFragment(b);
 
-        if(stepPosition == 0){
+        StepFragment stepFragment = new StepFragment();
+        stepFragment.setArguments(b);
+        fragmentManager.beginTransaction()
+                .replace(R.id.step_container, stepFragment)
+                .commit();
+
+        if (stepPosition == 0) {
             previous.setClickable(false);
             previous.setText("");
-        }else if(stepPosition == steps.size() - 2){
+        } else if (stepPosition == steps.size() - 2) {
             next.setClickable(true);
             next.setText(R.string.next);
         }

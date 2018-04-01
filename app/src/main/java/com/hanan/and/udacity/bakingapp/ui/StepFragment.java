@@ -70,7 +70,7 @@ public class StepFragment extends Fragment {
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
                 && getResources().getConfiguration().smallestScreenWidthDp < 600) {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+//            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
             hideSystemUI();
         } else {
             stepDescTextView = rootView.findViewById(R.id.step_description);

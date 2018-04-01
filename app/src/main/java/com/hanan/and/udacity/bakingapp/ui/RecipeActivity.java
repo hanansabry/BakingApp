@@ -62,11 +62,14 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
             twoPane = true;
             setTitle(recipeName);
 
-            StepFragment stepFragment = new StepFragment();
+            StepFragment stepFragment = (StepFragment) fragmentManager.findFragmentById(R.id.step_container);
+            if (stepFragment == null) {
+                stepFragment = new StepFragment();
+            }
             Bundle b = new Bundle();
             if (savedInstanceState == null) {
                 b.putParcelable(Recipe.RECIPE_STEP, recipe.getSteps().get(0));
-            }else{
+            } else {
                 position = savedInstanceState.getInt(Recipe.RECIPE_STEP_POSITION);
                 b.putParcelable(Recipe.RECIPE_STEP, recipe.getSteps().get(position));
             }
@@ -147,4 +150,9 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(Recipe.RECIPE_STEP_POSITION, position);
+    }
 }
