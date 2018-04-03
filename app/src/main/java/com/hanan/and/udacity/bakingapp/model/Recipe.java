@@ -18,6 +18,8 @@ public class Recipe implements Parcelable{
     public static final String RECIPE_STEP = "step";
     public static final String RECIPE_NAME = "recipe_name";
     public static final String RECIPE_STEP_POSITION = "step_position";
+    public static final String RECIPE_INGREDIENTS_STRING = "recipe_ingredients_string";
+
 
     @SerializedName("id")
     private int id;

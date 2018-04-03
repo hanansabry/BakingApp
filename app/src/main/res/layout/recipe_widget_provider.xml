@@ -17,7 +17,8 @@
             android:padding="8dp"
             android:text="Recipe Name"
             android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
         <ListView
             android:id="@+id/widget_list_view"

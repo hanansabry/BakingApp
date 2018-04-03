@@ -1,14 +1,24 @@
 package com.hanan.and.udacity.bakingapp.adapter;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hanan.and.udacity.bakingapp.R;
 import com.hanan.and.udacity.bakingapp.model.Ingredient;
+import com.hanan.and.udacity.bakingapp.model.Recipe;
+import com.hanan.and.udacity.bakingapp.ui.RecipeWidgetProvider;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
@@ -24,10 +34,11 @@ public class IngredientListWidgetService extends RemoteViewsService {
 
 class IngredientsListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    Context mContext;
-    ArrayList<Ingredient> mIngredients;
+    private Context mContext;
+    private ArrayList<Ingredient> mIngredients;
+    private Recipe recipe;
 
-    public IngredientsListRemoteViewsFactory(Context context){
+    public IngredientsListRemoteViewsFactory(Context context) {
         mContext = context;
     }
 
@@ -38,26 +49,16 @@ class IngredientsListRemoteViewsFactory implements RemoteViewsService.RemoteView
     //here I will get the data from shared preferences
     @Override
     public void onDataSetChanged() {
-        //create test ingredients list
-        mIngredients = new ArrayList<>();
-        Ingredient i1 = new Ingredient();
-        i1.setIngredient("butter");
-        i1.setMeasure("cup");
-        i1.setQuantity("3");
-        mIngredients.add(i1);
+        //get the recipe ingredients from SharePreferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        Gson gson = new Gson();
+        String ingredientsJson = sharedPreferences.getString(Recipe.RECIPE_INGREDIENTS_STRING, null);
+        Type typeIngredient = new TypeToken<ArrayList<Ingredient>>() {}.getType();
+        mIngredients = gson.fromJson(ingredientsJson, typeIngredient);
 
-        Ingredient i2 = new Ingredient();
-        i2.setIngredient("sugar");
-        i2.setMeasure("Spoon");
-        i2.setQuantity("2");
-        mIngredients.add(i2);
-
-        Ingredient i3 = new Ingredient();
-        i3.setIngredient("chocalate");
-        i3.setMeasure("cup");
-        i3.setQuantity("1");
-        mIngredients.add(i3);
-//        mIngredients = new ArrayList<>();
+        String recipeJson = sharedPreferences.getString(Recipe.RECIPE, null);
+        Type typeRecipe = new TypeToken<Recipe>() {}.getType();
+        recipe = gson.fromJson(recipeJson, typeRecipe);
     }
 
     @Override
@@ -67,7 +68,7 @@ class IngredientsListRemoteViewsFactory implements RemoteViewsService.RemoteView
 
     @Override
     public int getCount() {
-        return mIngredients.size();
+        return mIngredients == null ? 0 : mIngredients.size();
     }
 
     //populate items with its data
@@ -81,7 +82,10 @@ class IngredientsListRemoteViewsFactory implements RemoteViewsService.RemoteView
         views.setTextViewText(R.id.ingredient_quantity, ingredient.getQuantity());
 
         // Fill in the onClick PendingIntent Template using the specific plant Id for each item individually
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(Recipe.RECIPE, recipe);
         Intent fillInIntent = new Intent();
+        fillInIntent.putExtras(bundle);
         views.setOnClickFillInIntent(R.id.ingredient_item, fillInIntent);
 
         return views;
@@ -105,5 +109,17 @@ class IngredientsListRemoteViewsFactory implements RemoteViewsService.RemoteView
     @Override
     public boolean hasStableIds() {
         return false;
+    }
+
+    public static Intent updateWidgetList(Context context) {
+        Intent intent = new Intent(context, RecipeWidgetProvider.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, RecipeWidgetProvider.class));
+        //Trigger data update to handle the GridView widgets and force a data refresh
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+        return intent;
     }
 }
