@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ingredient_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@android:color/white"
     android:orientation="horizontal"
-    android:padding="8dp"
-    android:background="@android:color/white">
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/ingredient_name"
@@ -18,16 +19,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="3"
-        android:gravity="end|center"/>
+        android:gravity="end|center"
+        android:text="3" />
 
     <TextView
         android:id="@+id/ingredient_measure"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="cup"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:text="cup" />
 
 
 </LinearLayout>

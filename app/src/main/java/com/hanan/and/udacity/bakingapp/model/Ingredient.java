@@ -23,6 +23,9 @@ public class Ingredient implements Parcelable{
         ingredient = parcel.readString();
     }
 
+    public Ingredient(){
+    }
+
     public String getQuantity() {
         return quantity;
     }

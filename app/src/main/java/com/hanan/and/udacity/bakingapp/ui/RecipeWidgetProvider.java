@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.widget.RemoteViews;
 
 import com.hanan.and.udacity.bakingapp.R;
+import com.hanan.and.udacity.bakingapp.adapter.IngredientListWidgetService;
 
 /**
  * Implementation of App Widget functionality.
@@ -18,17 +19,19 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        CharSequence widgetText = context.getString(R.string.appwidget_text);
-        // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
+//        CharSequence recipeName = "Brownies";
+//        // Construct the RemoteViews object
+//        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
+//        views.setTextViewText(R.id.widget_recipe_name, recipeName);
+//
+//        //construct the click handler for the widget
+//        Intent intent = new Intent(context, MainActivity.class);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+//
+//        views.setOnClickPendingIntent(R.id.widget_recipe_name, pendingIntent);
 
-        //construct the click handler for the widget
-        Intent intent = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-
-        views.setOnClickPendingIntent(R.id.appwidget_text, pendingIntent);
-
+        RemoteViews views = getIngredientsListRemoteView(context);
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_list_view);
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
@@ -51,10 +54,22 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
     }
 
-    @Override
-    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
-        updateAppWidget(context, appWidgetManager, appWidgetId);
-        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
+    private static RemoteViews getIngredientsListRemoteView(Context context) {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
+
+        //set the IngredientListWidgetService intent to act as the adapter for the list view
+        Intent intent = new Intent(context, IngredientListWidgetService.class);
+        views.setRemoteAdapter(R.id.widget_list_view, intent);
+
+        //set the RecipeActivity intent to launch when clicked
+        Intent appIntent = new Intent(context, MainActivity.class);
+        PendingIntent appPendingIntent = PendingIntent.getActivity
+                (context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setPendingIntentTemplate(R.id.widget_list_view, appPendingIntent);
+
+        //set empty view when no recipe is clicked yet
+        views.setEmptyView(R.id.widget_list_view, R.id.empty_view);
+        return views;
     }
 }
 
