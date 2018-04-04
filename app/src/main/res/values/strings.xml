@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">BakingApp</string>
     <string name="backdrop_title">Baking App</string>
-    <string name="backdrop_subtitle">Sharing my best recips</string>
+    <string name="backdrop_subtitle">Sharing my best recipes</string>
     <string name="previous"><![CDATA[< Previous]]></string>
     <string name="next"><![CDATA[Next >]]></string>
-    <string name="appwidget_text">Baking App</string>
-    <string name="add_widget">Add widget</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="steps">Steps</string>
+    <string name="widget_empty_view_text">Select recipe from the application</string>
+    <string name="step_progress">%1d / %2d</string>
+    <string name="complete">COMPLETE</string>
 </resources>

@@ -15,7 +15,6 @@
             android:background="@color/colorAccent"
             android:gravity="center"
             android:padding="8dp"
-            android:text="Recipe Name"
             android:textColor="@android:color/white"
             android:textStyle="bold"
             android:visibility="gone"/>
@@ -37,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Select recipe from the application"
+            android:text="@string/widget_empty_view_text"
             android:textAlignment="center"
             android:textColor="#ffffff"
             android:textSize="20sp"

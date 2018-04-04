@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 
 import com.hanan.and.udacity.bakingapp.R;
 import com.hanan.and.udacity.bakingapp.adapter.IngredientsAdapter;
-import com.hanan.and.udacity.bakingapp.adapter.RecipesAdapter;
 import com.hanan.and.udacity.bakingapp.adapter.StepsAdapter;
 import com.hanan.and.udacity.bakingapp.model.Ingredient;
 import com.hanan.and.udacity.bakingapp.model.Recipe;
@@ -26,13 +25,9 @@ import java.util.List;
 
 public class MasterRecipeFragment extends Fragment {
 
-    private List<Ingredient> ingredients;
-    private List<Step> steps;
     private String recipeName;
     private int recipeThumb;
     OnStepClickListener mCallback;
-
-    private RecyclerView ingredientsRV, stepsRV;
 
     public interface OnStepClickListener {
         void onStepSelected(Bundle bundle);
@@ -59,17 +54,17 @@ public class MasterRecipeFragment extends Fragment {
         Bundle bundle = getArguments();
         Recipe recipe = bundle.getParcelable(Recipe.RECIPE);
 
-        ingredients = recipe.getIngredients();
-        steps = recipe.getSteps();
+        List<Ingredient> ingredients = recipe.getIngredients();
+        List<Step> steps = recipe.getSteps();
 
-        ingredientsRV = rootView.findViewById(R.id.ingredients_rv);
+        RecyclerView ingredientsRV = rootView.findViewById(R.id.ingredients_rv);
         RecyclerView.LayoutManager layout1 = new LinearLayoutManager(getContext());
         ingredientsRV.setLayoutManager(layout1);
         IngredientsAdapter ingredientsAdapter = new IngredientsAdapter(getContext(), ingredients);
         ingredientsRV.setAdapter(ingredientsAdapter);
         ingredientsAdapter.notifyDataSetChanged();
 
-        stepsRV = rootView.findViewById(R.id.steps_rv);
+        RecyclerView stepsRV = rootView.findViewById(R.id.steps_rv);
         RecyclerView.LayoutManager layout2 = new LinearLayoutManager(getContext());
         stepsRV.setLayoutManager(layout2);
         stepsRV.addItemDecoration(new MyDividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL, 0));

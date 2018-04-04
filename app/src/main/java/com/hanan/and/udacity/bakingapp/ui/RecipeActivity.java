@@ -1,25 +1,18 @@
 package com.hanan.and.udacity.bakingapp.ui;
 
 import android.content.Intent;
-import android.os.PersistableBundle;
+import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hanan.and.udacity.bakingapp.R;
-import com.hanan.and.udacity.bakingapp.adapter.IngredientsAdapter;
-import com.hanan.and.udacity.bakingapp.adapter.RecipesAdapter;
-import com.hanan.and.udacity.bakingapp.adapter.StepsAdapter;
 import com.hanan.and.udacity.bakingapp.model.Ingredient;
 import com.hanan.and.udacity.bakingapp.model.Recipe;
 import com.hanan.and.udacity.bakingapp.model.Step;
@@ -30,7 +23,6 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
     private List<Ingredient> ingredients;
     private List<Step> steps;
     private String recipeName;
-    private int recipeThumb;
     Recipe recipe;
     public static boolean twoPane;
     int position;
@@ -48,7 +40,7 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         recipe = bundle.getParcelable(Recipe.RECIPE);
-        recipeThumb = recipe.getImage();
+        int recipeThumb = recipe.getImage();
         recipeName = recipe.getName();
 
         setTitle(recipeName);
@@ -96,9 +88,9 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
 
     private void initCollapsingToolbar() {
         final CollapsingToolbarLayout collapsingToolbar =
-                (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+                 findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(" ");
-        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+        AppBarLayout appBarLayout = findViewById(R.id.appbar);
         appBarLayout.setExpanded(true);
 
         // hiding & showing the title when toolbar expanded & collapsed

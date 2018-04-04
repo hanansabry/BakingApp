@@ -1,24 +1,16 @@
 package com.hanan.and.udacity.bakingapp.ui;
 
-import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -34,37 +26,30 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.hanan.and.udacity.bakingapp.R;
 import com.hanan.and.udacity.bakingapp.model.Recipe;
-import com.stepstone.stepper.Step;
-import com.stepstone.stepper.VerificationError;
-
-import java.util.HashMap;
+import com.hanan.and.udacity.bakingapp.model.Step;
 
 /**
  * Created by Nono on 3/21/2018.
  */
 
 public class StepFragment extends Fragment {
-    private TextView stepDescTextView, stepNameTextView;
-    private String stepDescription, stepName;
     private SimpleExoPlayerView mPlayerView;
     private SimpleExoPlayer mExoPlayer;
-    private com.hanan.and.udacity.bakingapp.model.Step recipeStep;
 
-    private FrameLayout frameLayout;
     private View rootView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        frameLayout = new FrameLayout(getActivity());
+        FrameLayout frameLayout = new FrameLayout(getActivity());
         View rootView = inflater.inflate(R.layout.fragment_step, container, false);
         frameLayout.addView(rootView);
         mPlayerView = rootView.findViewById(R.id.player_view);
 
         Bundle b = getArguments();
-        recipeStep = b.getParcelable(Recipe.RECIPE_STEP);
-        stepName = recipeStep.getShortDescription();
-        stepDescription = recipeStep.getDescription();
+        Step recipeStep = b.getParcelable(Recipe.RECIPE_STEP);
+        String stepName = recipeStep.getShortDescription();
+        String stepDescription = recipeStep.getDescription();
 
         int width = getResources().getConfiguration().smallestScreenWidthDp;
 
@@ -73,8 +58,8 @@ public class StepFragment extends Fragment {
 //            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
             hideSystemUI();
         } else {
-            stepDescTextView = rootView.findViewById(R.id.step_description);
-            stepNameTextView = rootView.findViewById(R.id.step_name);
+            TextView stepDescTextView = rootView.findViewById(R.id.step_description);
+            TextView stepNameTextView = rootView.findViewById(R.id.step_name);
 
             stepNameTextView.setText(stepName);
             stepDescTextView.setText(stepDescription);
@@ -140,11 +125,6 @@ public class StepFragment extends Fragment {
     public void onPause() {
         super.onPause();
         releasePlayer();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     private long playbackPosition;

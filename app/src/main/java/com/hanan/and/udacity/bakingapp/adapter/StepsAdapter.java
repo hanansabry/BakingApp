@@ -1,7 +1,6 @@
 package com.hanan.and.udacity.bakingapp.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +12,6 @@ import com.hanan.and.udacity.bakingapp.R;
 import com.hanan.and.udacity.bakingapp.model.Recipe;
 import com.hanan.and.udacity.bakingapp.model.Step;
 import com.hanan.and.udacity.bakingapp.ui.MasterRecipeFragment;
-import com.hanan.and.udacity.bakingapp.ui.StepDetailsActivity;
 
 import java.util.ArrayList;
 import java.util.List;

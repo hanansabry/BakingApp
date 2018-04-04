@@ -1,44 +1,25 @@
 package com.hanan.and.udacity.bakingapp.ui;
 
 import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.PersistableBundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 import com.hanan.and.udacity.bakingapp.R;
-import com.hanan.and.udacity.bakingapp.adapter.StepsAdapter;
 import com.hanan.and.udacity.bakingapp.model.Recipe;
 import com.hanan.and.udacity.bakingapp.model.Step;
-import com.stepstone.stepper.StepperLayout;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class StepDetailsActivity extends AppCompatActivity {
 
-    private StepperLayout mStepperLayout;
     private SimpleExoPlayerView mPlayerView;
     private SimpleExoPlayer mExoPlayer;
     private int stepPosition;
@@ -77,26 +58,29 @@ public class StepDetailsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
             setTitle(recipeName);
-            stepsProgress.setText(stepPosition + " / " + (steps.size() - 1));
+            stepsProgress.setText(setStepProgressText());
 
             if (stepPosition == 0) {
                 previous.setClickable(false);
                 previous.setText("");
             } else if (stepPosition == steps.size() - 1) {
                 next.setClickable(false);
-                next.setText("COMPLETE");
+                next.setText(getResources().getString(R.string.complete));
             }
         }
 
-        //            addStepFragment(bundle);
         StepFragment stepFragment = (StepFragment) fragmentManager.findFragmentById(R.id.step_container);
-        if(stepFragment == null){
+        if (stepFragment == null) {
             stepFragment = new StepFragment();
         }
         stepFragment.setArguments(bundle);
         fragmentManager.beginTransaction()
                 .replace(R.id.step_container, stepFragment)
                 .commit();
+    }
+
+    private String setStepProgressText() {
+        return String.format(getResources().getString(R.string.step_progress), stepPosition, (steps.size() - 1));
     }
 
     @Override
@@ -112,7 +96,7 @@ public class StepDetailsActivity extends AppCompatActivity {
 
     public void addStepFragment(Bundle bundle) {
         StepFragment stepFragment = (StepFragment) fragmentManager.findFragmentById(R.id.step_container);
-        if(stepFragment == null){
+        if (stepFragment == null) {
             stepFragment = new StepFragment();
         }
         stepFragment.setArguments(bundle);
@@ -141,9 +125,9 @@ public class StepDetailsActivity extends AppCompatActivity {
             previous.setText(R.string.previous);
         } else if (stepPosition == steps.size() - 1) {
             next.setClickable(false);
-            next.setText("COMPLETE");
+            next.setText(getResources().getString(R.string.complete));
         }
-        stepsProgress.setText(stepPosition + " / " + (steps.size() - 1));
+        stepsProgress.setText(setStepProgressText());
     }
 
     public void onPreviousClicked(View view) {
@@ -168,7 +152,7 @@ public class StepDetailsActivity extends AppCompatActivity {
             next.setText(R.string.next);
         }
 
-        stepsProgress.setText(stepPosition + " / " + (steps.size() - 1));
+        stepsProgress.setText(setStepProgressText());
     }
 
     @Override

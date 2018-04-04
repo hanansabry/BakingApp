@@ -4,28 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.hanan.and.udacity.bakingapp.R;
 import com.hanan.and.udacity.bakingapp.model.Recipe;
-import com.hanan.and.udacity.bakingapp.ui.MasterRecipeFragment;
 import com.hanan.and.udacity.bakingapp.ui.RecipeActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -70,8 +62,8 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipeHo
 
         public RecipeHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.title);
-            thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
+            title = itemView.findViewById(R.id.title);
+            thumbnail = itemView.findViewById(R.id.thumbnail);
             itemView.setOnClickListener(this);
 
         }
@@ -89,7 +81,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipeHo
             editor.putString(Recipe.RECIPE_INGREDIENTS_STRING, json);
             editor.putString(Recipe.RECIPE, gson.toJson(recipe));
             editor.putString(Recipe.RECIPE_NAME, recipe.getName());
-            editor.commit();
+            editor.apply();
             //update the widget
             Intent widgetIntent = IngredientsListRemoteViewsFactory.updateWidgetList(mContext);
             mContext.sendBroadcast(widgetIntent);
