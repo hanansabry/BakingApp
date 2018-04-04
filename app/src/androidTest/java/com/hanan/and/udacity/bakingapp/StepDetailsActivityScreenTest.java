@@ -47,7 +47,7 @@ public class StepDetailsActivityScreenTest {
         onView(withId(R.id.step_name)).check(matches(withText(STEP_2)));
 
         //check the step_number
-        onView(withId(R.id.steps_progress)).check(matches(withText("1 / 6")));
+        onView(withId(R.id.steps_progress)).check(matches(withText("1 /  6")));
     }
 
     //test the previous button
@@ -66,7 +66,7 @@ public class StepDetailsActivityScreenTest {
         onView(withId(R.id.step_name)).check(matches(withText(STEP_1)));
 
         //check the step_number
-        onView(withId(R.id.steps_progress)).check(matches(withText("0 / 6")));
+        onView(withId(R.id.steps_progress)).check(matches(withText("0 /  6")));
 
     }
 

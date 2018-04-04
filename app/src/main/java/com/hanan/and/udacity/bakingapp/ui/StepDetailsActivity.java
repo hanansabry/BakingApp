@@ -94,25 +94,11 @@ public class StepDetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void addStepFragment(Bundle bundle) {
-        StepFragment stepFragment = (StepFragment) fragmentManager.findFragmentById(R.id.step_container);
-        if (stepFragment == null) {
-            stepFragment = new StepFragment();
-        }
-        stepFragment.setArguments(bundle);
-        fragmentManager.beginTransaction()
-                .replace(R.id.step_container, stepFragment)
-                .commit();
-    }
-
-
     public void onNextClicked(View view) {
         stepPosition++;
         Step nextStep = steps.get(stepPosition);
         Bundle b = new Bundle();
         b.putParcelable(Recipe.RECIPE_STEP, steps.get(stepPosition));
-
-//        addStepFragment(b);
 
         StepFragment stepFragment = new StepFragment();
         stepFragment.setArguments(b);
@@ -136,7 +122,6 @@ public class StepDetailsActivity extends AppCompatActivity {
 
         Bundle b = new Bundle();
         b.putParcelable(Recipe.RECIPE_STEP, steps.get(stepPosition));
-//        addStepFragment(b);
 
         StepFragment stepFragment = new StepFragment();
         stepFragment.setArguments(b);
