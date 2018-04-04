@@ -40,7 +40,7 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.recipe_activity_toolbar);
         setSupportActionBar(toolbar);
         //add up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -50,6 +50,8 @@ public class RecipeActivity extends AppCompatActivity implements MasterRecipeFra
         recipe = bundle.getParcelable(Recipe.RECIPE);
         recipeThumb = recipe.getImage();
         recipeName = recipe.getName();
+
+        setTitle(recipeName);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         MasterRecipeFragment recipeFragment = new MasterRecipeFragment();
