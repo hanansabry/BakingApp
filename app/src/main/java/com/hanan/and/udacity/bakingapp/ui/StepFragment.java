@@ -1,6 +1,7 @@
 package com.hanan.and.udacity.bakingapp.ui;
 
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
@@ -28,6 +31,11 @@ import com.hanan.and.udacity.bakingapp.R;
 import com.hanan.and.udacity.bakingapp.model.Recipe;
 import com.hanan.and.udacity.bakingapp.model.Step;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 /**
  * Created by Nono on 3/21/2018.
  */
@@ -35,8 +43,10 @@ import com.hanan.and.udacity.bakingapp.model.Step;
 public class StepFragment extends Fragment {
     private SimpleExoPlayerView mPlayerView;
     private SimpleExoPlayer mExoPlayer;
-
-    private View rootView;
+    private ImageView thumbnailView;
+    private long playbackPosition;
+    private int currentWindow;
+    private boolean playWhenReady = true;
 
     @Nullable
     @Override
@@ -45,17 +55,18 @@ public class StepFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_step, container, false);
         frameLayout.addView(rootView);
         mPlayerView = rootView.findViewById(R.id.player_view);
+        thumbnailView = rootView.findViewById(R.id.thumbnail_view);
 
         Bundle b = getArguments();
         Step recipeStep = b.getParcelable(Recipe.RECIPE_STEP);
         String stepName = recipeStep.getShortDescription();
         String stepDescription = recipeStep.getDescription();
+        String videoUrl = recipeStep.getVideoURL();
+        String thumbUrl = recipeStep.getThumbnailURL();
 
         int width = getResources().getConfiguration().smallestScreenWidthDp;
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE
-                && getResources().getConfiguration().smallestScreenWidthDp < 600) {
-//            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && width < 600) {
             hideSystemUI();
         } else {
             TextView stepDescTextView = rootView.findViewById(R.id.step_description);
@@ -71,11 +82,16 @@ public class StepFragment extends Fragment {
         }
         initializePlayer(Uri.parse(recipeStep.getVideoURL()));
 
-        if (recipeStep.getVideoURL() == null || recipeStep.getVideoURL().equals("")) {
-            mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(
-                    getResources(), R.drawable.no_video
-            ));
+        if (videoUrl == null || videoUrl.equals("")) {
+//            mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource(
+//                    getResources(), R.drawable.no_video
+//            ));
+            thumbnailView.setVisibility(View.VISIBLE);
+            mPlayerView.setVisibility(View.GONE);
+            loadThumbnailImage(thumbUrl);
             mPlayerView.hideController();
+        }else{
+            thumbnailView.setVisibility(View.GONE);
         }
 
         return frameLayout;
@@ -127,15 +143,20 @@ public class StepFragment extends Fragment {
         releasePlayer();
     }
 
-    private long playbackPosition;
-    private int currentWindow;
-    private boolean playWhenReady = true;
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong("PLAY_BACK_POSITION", playbackPosition);
         outState.putInt("CURRENT_WINDOW", currentWindow);
         outState.putBoolean("PLAY_WHEN_READY", playWhenReady);
+    }
+
+    public void loadThumbnailImage(String thumbUrl) {
+        Glide.with(this)
+                .load(thumbUrl) // image url
+                .placeholder(R.drawable.app_cover) // any placeholder to load at start
+                .error(R.drawable.no_video)  // any image in case of error
+                .fitCenter()
+                .into(thumbnailView);
     }
 }
